@@ -129,6 +129,8 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return php_phongo_bulkwriteexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
 			return php_phongo_connectionexception_ce;
+		case PHONGO_ERROR_COMMAND_FAILED:
+			return php_phongo_commandexception_ce;
 	}
 
 	MONGOC_ERROR("Resolving unknown phongo error domain: %d", domain);
@@ -672,11 +674,9 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 		if ((error.domain == MONGOC_ERROR_COMMAND && error.code != MONGOC_ERROR_COMMAND_INVALID_ARG) ||
 			error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
-			phongo_add_exception_prop(ZEND_STRL("resultDocument"), return_value TSRMLS_CC);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		} else {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-			phongo_add_exception_prop(ZEND_STRL("resultDocument"), return_value TSRMLS_CC);
 		}
 	}
 
@@ -852,7 +852,12 @@ int phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t ty
 			return false;
 	}
 	if (!result) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), (zval*) &reply TSRMLS_CC);
+			phongo_throw_exception(PHONGO_ERROR_COMMAND_FAILED TSRMLS_CC, "%s", error.message);
+		} else {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		}
 		bson_destroy(&reply);
 		bson_destroy(&opts);
 		return false;

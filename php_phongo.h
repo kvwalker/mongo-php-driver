@@ -91,7 +91,8 @@ typedef enum {
 	PHONGO_ERROR_MONGOC_FAILED     = 3,
 	PHONGO_ERROR_WRITE_FAILED      = 5,
 	PHONGO_ERROR_CONNECTION_FAILED = 7,
-	PHONGO_ERROR_LOGIC             = 9
+	PHONGO_ERROR_LOGIC             = 9,
+	PHONGO_ERROR_COMMAND_FAILED    = 10
 } php_phongo_error_domain_t;
 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
