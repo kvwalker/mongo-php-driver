@@ -2,7 +2,7 @@
 MongoDB\Driver\Manager::executeWriteCommand() throws CommandException for unsupported update operator
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -19,18 +19,25 @@ $command = new MongoDB\Driver\Command([
 try {
     $manager->executeWriteCommand(DATABASE_NAME, $command);
 } catch (MongoDB\Driver\Exception\CommandException $e) {
-	printf("CommandException: %s\n", $e->getMessage());
-
-    echo "\n===> ResultDocument\n";
+    printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
     var_dump($e->getResultDocument());
+    assert($e->getMessage() === $e->getResultDocument()->errmsg);
+    assert($e->getCode() === $e->getResultDocument()->code);
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-CommandException: Either an update or remove=true must be specified
-
-===> ResultDocument
-NULL
+MongoDB\Driver\Exception\CommandException(9): Either an update or remove=true must be specified
+object(stdClass)#4 (4) {
+  ["ok"]=>
+  float(0)
+  ["errmsg"]=>
+  string(49) "Either an update or remove=true must be specified"
+  ["code"]=>
+  int(9)
+  ["codeName"]=>
+  string(13) "FailedToParse"
+}
 ===DONE===

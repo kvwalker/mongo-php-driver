@@ -129,8 +129,6 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return php_phongo_bulkwriteexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
 			return php_phongo_connectionexception_ce;
-		case PHONGO_ERROR_COMMAND_FAILED:
-			return php_phongo_commandexception_ce;
 	}
 
 	MONGOC_ERROR("Resolving unknown phongo error domain: %d", domain);
@@ -853,8 +851,9 @@ int phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t ty
 	}
 	if (!result) {
 		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
-			phongo_add_exception_prop(ZEND_STRL("resultDocument"), (zval*) &reply TSRMLS_CC);
-			phongo_throw_exception(PHONGO_ERROR_COMMAND_FAILED TSRMLS_CC, "%s", error.message);
+			zend_throw_exception(php_phongo_commandexception_ce, error.message, error.code TSRMLS_CC);
+			php_phongo_bson_to_zval(bson_get_data(&reply), reply.len, return_value);
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), return_value TSRMLS_CC);
 		} else {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		}
