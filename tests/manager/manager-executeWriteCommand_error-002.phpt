@@ -29,9 +29,9 @@ try {
 <?php exit(0); ?>
 --EXPECTF--
 MongoDB\Driver\Exception\CommandException(79): Write Concern error: No write concern mode named 'undefined' found in replica set configuration
-object(stdClass)#13 (6) {
+object(stdClass)#%d (%d) {
   ["lastErrorObject"]=>
-  object(stdClass)#5 (3) {
+  object(stdClass)#%d (3) {
     ["n"]=>
     int(1)
     ["updatedExisting"]=>
@@ -40,7 +40,7 @@ object(stdClass)#13 (6) {
     string(3) "foo"
   }
   ["value"]=>
-  object(stdClass)#6 (2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     string(3) "foo"
     ["foo"]=>
@@ -50,7 +50,7 @@ object(stdClass)#13 (6) {
     }
   }
   ["writeConcernError"]=>
-  object(stdClass)#7 (3) {
+  object(stdClass)#%d (3) {
     ["code"]=>
     int(79)
     ["codeName"]=>
@@ -59,35 +59,6 @@ object(stdClass)#13 (6) {
     string(74) "No write concern mode named 'undefined' found in replica set configuration"
   }
   ["ok"]=>
-  float(1)
-  ["operationTime"]=>
-  object(MongoDB\BSON\Timestamp)#8 (2) {
-    ["increment"]=>
-    string(1) "%d"
-    ["timestamp"]=>
-    string(10) "%d"
-  }
-  ["$clusterTime"]=>
-  object(stdClass)#12 (2) {
-    ["clusterTime"]=>
-    object(MongoDB\BSON\Timestamp)#9 (2) {
-      ["increment"]=>
-      string(1) "%d"
-      ["timestamp"]=>
-      string(10) "%d"
-    }
-    ["signature"]=>
-    object(stdClass)#11 (2) {
-      ["hash"]=>
-      object(MongoDB\BSON\Binary)#10 (2) {
-        ["data"]=>
-        string(20) "%S"
-        ["type"]=>
-        int(0)
-      }
-      ["keyId"]=>
-      int(0)
-    }
-  }
+  float(1)%A
 }
 ===DONE===

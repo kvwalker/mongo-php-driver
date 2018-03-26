@@ -851,14 +851,18 @@ int phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t ty
 	}
 	if (!result) {
 		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
-			zend_throw_exception(php_phongo_commandexception_ce, error.message, error.code TSRMLS_CC);
 #if PHP_VERSION_ID >= 70000
 			zval zv;
-			php_phongo_bson_to_zval(bson_get_data(&reply), reply.len, &zv);
-			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv TSRMLS_CC);
 #else
 			zval* zv;
+#endif
+
+			zend_throw_exception(php_phongo_commandexception_ce, error.message, error.code TSRMLS_CC);
 			php_phongo_bson_to_zval(bson_get_data(&reply), reply.len, &zv);
+
+#if PHP_VERSION_ID >= 70000
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
+#else
 			phongo_add_exception_prop(ZEND_STRL("resultDocument"), zv TSRMLS_CC);
 #endif
 		} else {
