@@ -21,8 +21,6 @@ try {
 } catch (MongoDB\Driver\Exception\CommandException $e) {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
     var_dump($e->getResultDocument());
-    assert($e->getMessage() === $e->getResultDocument()->errmsg);
-    assert($e->getCode() === $e->getResultDocument()->code);
 }
 
 ?>
