@@ -25,8 +25,17 @@
 
 zend_class_entry* php_phongo_sslconnectionexception_ce;
 
+extern ZEND_METHOD(exception, __construct);
+
+ZEND_BEGIN_ARG_INFO_EX(ai_SSLConnectionException___construct, 0, 0, 0)
+	ZEND_ARG_INFO(0, message)
+	ZEND_ARG_INFO(0, code)
+	ZEND_ARG_INFO(0, previous)
+ZEND_END_ARG_INFO()
+
 /* {{{ MongoDB\Driver\Exception\SSLConnectionException function entries */
 static zend_function_entry php_phongo_sslconnectionexception_me[] = {
+	ZEND_NAMED_ME(__construct, PHP_MN(exception___construct), ai_SSLConnectionException___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL | ZEND_ACC_DEPRECATED)
 	PHP_FE_END
 };
 /* }}} */
